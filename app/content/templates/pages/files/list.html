@@ -1,0 +1,103 @@
+{% extends 'content-base.html' %}
+{% load i18n staticfiles %}
+{#{% load i18n %}#}
+{% block title_block %}
+    {{ page_title }}
+{% endblock %}
+{% block css_block %}
+
+{% endblock %}
+{% block content_block %}
+		<div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+			<div class="ui container grid">
+				<div class="row itemcolor5">
+					<div class="sixteen wide computer sixteen wide phone centered column">
+                        <div class="ui large breadcrumb">
+                          <a class="section" href="{% url 'content-app:dashboard' %}">Dashboard</a>
+                          <i class="right chevron icon divider"></i>
+                          <div class="active section">{{ page_title }}</div>
+                        </div>
+						<div class="ui divider"></div>
+						<h2><i class="{{ page_icon }} icon"></i> {{ page_title }}</h2>
+						<div class="ui divider"></div>
+						<div class="ui grid">
+							<!-- END STATISTIC ITEM -->
+							<div class="sixteen wide computer sixteen wide phone column justifed">
+                                <form class="ui inverted segment navcolor" method="post" action="" id="main-search-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="page-num" id="page-num" value="1"/>
+                                  <div class="ui inverted form">
+                                    <div class="three fields">
+                                      <div class="field">
+                                        <label id="{{ search_form.search.id_for_label }}">{{ search_form.search.label }}</label>
+                                          {{ search_form.search }}
+                                      </div>
+                                      <div class="field">
+                                        <label id="{{ search_form.field_list.id_for_label }}">{{ search_form.field_list.label }}</label>
+                                          {{ search_form.field_list }}
+                                      </div>
+                                      <div class="field">
+                                        <label id="{{ search_form.order_type.id_for_label }}">{{ search_form.order_type.label }}</label>
+                                          {{ search_form.order_type }}
+                                      </div>
+                                    </div>
+                                    <div class="ui divider"></div>
+                                    <div class="two fields">
+                                      <div class="field">
+                                        <div class="ui calendar" id="calendar_start_date">
+                                            <div class="ui input left icon">
+                                            <i class="calendar icon"></i>
+                                                {{ search_form.start_date }}
+                                            </div>
+                                        </div>
+                                       </div>
+                                      <div class="field">
+                                        <div class="ui calendar" id="calendar_end_date">
+                                            <div class="ui input left icon">
+                                            <i class="calendar icon"></i>
+                                                {{ search_form.end_date }}
+                                            </div>
+                                        </div>
+                                       </div>
+                                    </div>
+                                    <div class="two ui buttons">
+                                        <button class="ui white button" type="submit">Search</button>
+                                        <a class="ui green button" href="{% url 'content-app:add-file' %}">
+                                            <i class="plus icon"></i>
+                                            Add new one
+                                        </a>
+                                    </div>
+                                  </div>
+                                </form>
+								<div class="ui divider"></div>
+                                <div class="ui items main-pagination-list"></div>
+                                <div class="ui divided items" id="main-data-list">
+                                </div>
+                                <div class="ui items main-pagination-list"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+{% block js_block %}
+
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/js/file-operations.js' %}"></script>
+
+<script>
+$( document ).ready(function() {
+    setTimeout(function(){
+        searchForm();
+    }, 500);
+    console.log( "ready!" );
+});
+
+
+
+</script>
+
+{% include 'include/messages-sweet-alert.html' %}
+
+
+{% endblock %}

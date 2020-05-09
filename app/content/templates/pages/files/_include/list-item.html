@@ -1,0 +1,55 @@
+{% load static %}
+
+  <div class="item" id="data-item-id-{{ data_item.id }}">
+    <div class="ui small  image">
+      <img src="{% static 'main/Semantic-UI/examples/assets/images/wireframe/image.png' %}">
+    </div>
+    <div class="content">
+      <div class="header">{{ data_item.title }}</div>
+      <div class="meta">
+        <span class="stay">{{ data_item.expiration_date }}</span>
+        <a class="circular mini ui teal icon button" href="{% url 'content-app:file-details' data_item.id %}">
+            <i class="icon eye"></i>
+        </a>
+        {% if data_item.author == user %}
+        <a class="circular mini ui yellow icon button" href="{% url 'content-app:file-edit' data_item.id %}">
+            <i class="icon pencil alternate"></i>
+        </a>
+        <button class="circular mini red ui icon button" onclick="DeleteItem('{% url 'content-app:file-remove' data_item.id %}','list-page')" >
+            <i class="icon trash alternate"></i>
+        </button>
+        {% endif %}
+      </div>
+      <div class="description">
+        <p>
+            {{ data_item.description|truncatechars_html:100 }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+{#<div class="ui card">#}
+{#  <div class="image">#}
+{#    <img src="{% static 'main/Semantic-UI/examples/assets/images/wireframe/image.png' %}">#}
+{#  </div>#}
+{#  <div class="content">#}
+{#    <div class="header">{{ data_item.title }}</div>#}
+{#    <div class="description">#}
+{##}
+{#        {{ data_item.description|truncatechars_html:100 }}#}
+{##}
+{#    </div>#}
+{#  </div>#}
+{#  <div class="ui two bottom attached buttons">#}
+{#    <a class="ui yellow button"  href="{% url 'content-app:file-edit' data_item.id %}">#}
+{#      <i class="icon pencil alternate"></i>#}
+{#    </a>#}
+{#    <a class="ui red button">#}
+{#      <i class="trash alternate icon"></i>#}
+{#    </a>#}
+{#  </div>#}
+{#</div>#}
+{#<div class="ui popup">#}
+{#  <div class="header">User Rating</div>#}
+{#  <div class="ui star rating" data-rating="3"></div>#}
+{#</div>#}

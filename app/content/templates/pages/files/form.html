@@ -1,0 +1,230 @@
+{% extends 'content-base.html' %}
+{% load static %}
+{% block title_block %}
+    {{ page_title }}
+{% endblock %}
+{% block css_block %}
+
+
+{% endblock %}
+{% block content_block %}
+		<div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+			<div class="ui container grid">
+				<div class="row itemcolor5">
+					<div class="sixteen wide computer sixteen wide phone centered column">
+                        <div class="ui large breadcrumb">
+                          <a class="section" href="{% url 'content-app:dashboard' %}">Dashboard</a>
+                          <i class="right chevron icon divider"></i>
+                          <a class="section" href="{% url 'content-app:file-list' %}">Your shared file list</a>
+                          <i class="right chevron icon divider"></i>
+                          <div class="active section">{{ page_title }}</div>
+                        </div>
+						<h2><i class="{{ page_icon }} icon"></i> {{ page_title }}</h2>
+						<div class="ui divider"></div>
+						<div class="ui grid">
+							<!-- BEGIN STATISTIC ITEM -->
+							<!-- END STATISTIC ITEM -->
+							<div class="sixteen wide computer sixteen wide phone column justifed">
+                                <div class="ui card fullwidth">
+                                  <div class="content">
+                                    <div class="header">
+                                        File details
+                                        {% if shared_file_obj.author == user %}
+                                        <i class="right chevron icon divider"></i>
+                                        <a class="circular mini ui teal icon button" href="{% url 'content-app:file-details' shared_file_obj.id %}">
+                                            <i class="icon eye"></i>
+                                        </a>
+                                        <button class="circular mini red ui icon button"  onclick="DeleteItem('{% url 'content-app:file-remove' shared_file_obj.id %}','{% url 'content-app:file-list' %}')" >
+                                            <i class="icon trash alternate"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="ui grid">
+                                    <div class="sixteen wide column">
+                                      {% include 'include/messages.html' %}
+                                      {% if messages %}
+                                        <div class="ui divider"></div>
+                                      {% endif %}
+                                        <div class="ui top attached tabular menu">
+                                          <a class="item active" data-tab="first">
+                                              <i class="icon pencil"></i>
+                                              Edit
+                                          </a>
+                                          <a class="item" data-tab="second">
+                                              <i class="icon settings"></i>Permission
+                                          </a>
+                                        </div>
+                                        <div class="ui bottom attached tab segment active" data-tab="first">
+                                            <form class="ui form" method="post" action=""  enctype="multipart/form-data">
+                                                {% csrf_token %}
+
+                                                  <div class="field">
+                                                    <label id="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                                                    <div class="fields">
+                                                      <div class="sixteen wide field">
+                                                        {{ form.title }}
+                                                        {% with form.title.errors as errors %}
+                                                            {% include 'include/error-item.html' %}
+                                                        {% endwith %}
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="field">
+                                                    <label id="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                                                    <div class="fields">
+                                                      <div class="sixteen wide field">
+                                                        {{ form.file }}
+                                                        {% with form.file.errors as errors %}
+                                                            {% include 'include/error-item.html' %}
+                                                        {% endwith %}
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="field">
+                                                    <label id="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                                                    <div class="fields">
+                                                      <div class="sixteen wide field">
+                                                        {{ form.description }}
+                                                        {% with form.description.errors as errors %}
+                                                            {% include 'include/error-item.html' %}
+                                                        {% endwith %}
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="field">
+                                                    <label id="{{ form.expiration_date.id_for_label }}">{{ form.expiration_date.label }}</label>
+                                                    <div class="fields">
+                                                      <div class="sixteen wide field">
+                                                        <div class="ui calendar" id="calendar_expiration_date">
+                                                            <div class="ui input left icon">
+                                                            <i class="calendar icon"></i>
+                                                            {{ form.expiration_date }}
+                                                            </div>
+                                                            {% with form.expiration_date.errors as errors %}
+                                                                {% include 'include/error-item.html' %}
+                                                            {% endwith %}
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                              <button class="ui button primary">{{ btn_label }}</button>
+                                            </form>
+                                        </div>
+                                        <div class="ui bottom attached tab segment" data-tab="second">
+
+                                            <form class="ui inverted segment navcolor" method="post" action="{% url 'content-app:file-permission-list' shared_file_obj.id %}" id="main-search-permission-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="page-num" id="page-num" value="1"/>
+                                                <div class="ui inverted form">
+                                                    <div class="two fields">
+                                                        <div class="field">
+                                                            <label id="{{ file_user_search_form.search.id_for_label }}">{{ file_user_search_form.search.label }}</label>
+                                                            {{ file_user_search_form.search }}
+                                                        </div>
+                                                        <div class="field">
+                                                            <label id="{{ file_user_search_form.permission_type.id_for_label }}">{{ file_user_search_form.permission_type.label }}</label>
+                                                            {{ file_user_search_form.permission_type }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="ui divider"></div>
+                                                    <div class="two ui buttons">
+                                                        <button class="ui white button" type="submit">Search</button>
+                                                        <button class="ui green button" type="button" onclick="newPermissionModal()">
+                                                            <i class="plus icon"></i>
+                                                            Give new permission
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <table class="ui celled padded table">
+                                              <thead>
+                                                <tr>
+                                                <th class="single line">User</th>
+                                                <th>Permission</th>
+                                                <th>/</th>
+                                              </tr></thead>
+                                              <tbody id="main-data-list">
+                                              </tbody>
+                                              <tfoot>
+                                                <tr>
+                                                    <th colspan="5">
+                                                      <div class="ui right floated pagination menu items main-pagination-list">
+                                                      </div>
+                                                    </th>
+                                                </tr>
+                                              </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+        <div class="ui longer modal">
+          <div class="header">New permission</div>
+          <div class="content">
+              <form id="new-user-permission-form" action="{% url 'content-app:file-permission-add' shared_file_obj.id %}" method="post" data-source-url="{% url 'content-app:user-list' %}">
+                    {% csrf_token %}
+                    <div class="ui inverted form">
+                        <div class="three stackable fields">
+                            <div class="field">
+                                <div class="ui icon input">
+                                  {{ add_new_user_permission_form.user_username_email }}
+                                  <i class="inverted circular search link icon" onclick="getUserData()"></i>
+                                </div>
+                                  {{ add_new_user_permission_form.user_id }}
+                            </div>
+                            <div class="field">
+                                <div class="ui segment padding-input" id="user_name_id">&nbsp;</div>
+                            </div>
+                            <div class="field">
+                                <div class="ui icon input">
+                                  {{ add_new_user_permission_form.permission_type }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+              </form>
+
+                <table class="ui unstackable  table">
+                  <thead>
+                      <tr>
+                        <th class="single line">User</th>
+                        <th>/</th>
+                      </tr>
+                  </thead>
+                  <tbody id="main-user-data-list">
+                  </tbody>
+                </table>
+          </div>
+          <div class="actions">
+            <div class="ui green button" onclick="newPermissionAddForm()">Add</div>
+            <div class="ui red cancel button">Close</div>
+          </div>
+        </div>
+
+{% endblock %}
+{% block js_block %}
+
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/js/file-operations.js' %}"></script>
+<script>
+$('.menu .item')
+  .tab()
+;
+</script>
+<script>
+    $( document ).ready(function() {
+        setTimeout(function(){
+            searchPermissionSectionForm();
+        }, 500);
+        console.log( "ready!" );
+    });
+
+</script>
+{% endblock %}

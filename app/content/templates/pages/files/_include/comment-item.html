@@ -1,0 +1,27 @@
+{% load static %}
+  <div class="comment" id="comment-id-{{ comment_item.id }}">
+    <a class="avatar">
+      <img src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/images/user.png' %}">
+    </a>
+    <div class="content">
+      <a class="author">
+        {{ comment_item.user.get_full_name }}
+      </a>
+      <div class="metadata">
+        <span class="date">{{ comment_item.created_date }}</span>
+          {% if comment_item.user.id == user.id %}
+            <a class="circular ui yellow" href="javascript:void(0)" id="comment-edit-button-{{ comment_item.id }}" onclick="editCommentModal('{{ comment_item.id }}','{{ comment_item.text }}')">
+                <i class="icon pencil alternate"></i>
+            </a>
+        {% endif %}
+        {% if comment_item.user.id == user.id or comment_item.shared_file.author.id == user.id %}
+            <a class="circular mini red ui yourButtonClass"  href="javascript:void(0)" onclick="deleteComment('{{ comment_item.id }}')" >
+                <i class="icon trash alternate"></i>
+            </a>
+        {% endif %}
+      </div>
+      <div class="text" id="comment-text-{{ comment_item.id }}">
+        {{ comment_item.text }}
+      </div>
+    </div>
+  </div>

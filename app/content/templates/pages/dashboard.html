@@ -1,0 +1,118 @@
+{% extends 'content-base.html' %}
+{% load static %}
+{% block title_block %}
+    Dashboard
+{% endblock %}
+{% block css_block %}
+
+{% endblock %}
+{% block content_block %}
+		<div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+			<div class="ui container grid">
+				<div class="row">
+					<div class="fifteen wide computer sixteen wide phone centered column">
+						<h2><i class="home icon"></i> DASHBOARD</h2>
+						<div class="ui divider"></div>
+						<div class="ui grid">
+							<!-- Begin Downloads -->
+							<div class="four wide computer sixteen wide phone centered column">
+								<div class="ui centered card">
+								    <div class="content">
+								        <div class="ui centered grid">
+								        	<div class="row">
+								        		<div class="six wide computer column">
+								        			<div class="ui small image simpleimage itemcolor3">
+			                                            	<i class="download icon simpleicon"></i>
+			                                        </div>
+								        		</div>
+								        		<div class="ten wide computer column">
+								        			<span><h4>My Files</h4></span>
+								        			<span id="all-files-count">-</span>
+								        			<a class="ui tiny label simplelable" href="{% url 'content-app:file-list' %}"><i class="eye icon"></i> Details</a>
+								        		</div>
+								        	</div>
+								        </div>
+								    </div>
+								</div>
+							</div>
+							<!-- End Downloads -->
+							<!-- Begin Users -->
+							<div class="four wide computer sixteen wide phone centered column">
+								<div class="ui centered card">
+								    <div class="content">
+								        <div class="ui centered grid">
+								        	<div class="row">
+								        		<div class="six wide computer column">
+								        			<div class="ui small image simpleimage itemcolor2">
+			                                            	<i class="settings icon simpleicon"></i>
+			                                        </div>
+								        		</div>
+								        		<div class="ten wide computer column">
+								        			<span><h4>Settings</h4></span>
+								        			-
+								        			<a class="ui tiny label simplelable" href="{% url 'content-app:settings' 'change-profile' %}">
+														<i class="setting icon"></i> Change
+													</a>
+								        		</div>
+								        	</div>
+								        </div>
+								    </div>
+								</div>
+							</div>
+							<!-- End Users -->
+							<!-- Begin Users -->
+							<div class="four wide computer sixteen wide phone centered column">
+								<div class="ui centered card">
+								    <div class="content">
+								        <div class="ui centered grid">
+								        	<div class="row">
+								        		<div class="six wide computer column">
+								        			<div class="ui small image simpleimage itemcolor1">
+			                                            	<i class="sign out alternate icon simpleicon"></i>
+			                                        </div>
+								        		</div>
+								        		<div class="ten wide computer column">
+								        			<span><h4>Logout</h4></span>
+													{{ request.user.get_full_name }}
+								        			<a class="ui tiny label simplelable" href="{% url 'user-app:logout' %}">
+														<i class="sign out alternate icon"></i> Logout
+													</a>
+								        		</div>
+								        	</div>
+								        </div>
+								    </div>
+								</div>
+							</div>
+							<!-- End Users -->
+							<div class="sixteen wide computer sixteen wide phone column justifed">
+								<div class="ui divider"></div>
+								<div class="ui tall stacked segment">
+									<a class="ui blue ribbon label">Files status</a>
+									<canvas id="example-pie"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+{% block js_block %}
+
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/vendors/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/vendors/chart.js/Chart.utils.js' %}"></script>
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/vendors/chart.js/Chart.example.js' %}"></script>
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/js/file-operations.js' %}"></script>
+<script>
+$( document ).ready(function() {
+    setTimeout(function(){
+        getDashboardData();
+    }, 500);
+    console.log( "ready!" );
+});
+
+
+
+</script>
+
+{% endblock %}

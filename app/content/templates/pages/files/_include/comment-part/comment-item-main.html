@@ -1,0 +1,18 @@
+{% load static %}
+  <div class="comment" id="comment-id-{{ comment_item.id }}">
+    <a class="avatar">
+      <img src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/images/user.png' %}">
+    </a>
+    <div class="content">
+      <a class="author">
+        {{ comment_item.user.get_full_name }}
+      </a>
+      <div class="metadata">
+        <span class="date">{{ comment_item.created_date }}</span>
+          {{ replace_text }}
+      </div>
+      <div class="text" id="comment-text-{{ comment_item.id }}">
+        {{ comment_item.text }}
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,15 @@
+{% load static %}
+
+<tr>
+  <td class="single line">
+    {{ data_item.user.get_full_name }}
+  </td>
+  <td class="single line">
+    {{ data_item.get_permission_type }}
+  </td>
+  <td class="single line">
+        <button class="circular mini red ui icon button" onclick="DeletePermissionItem('{% url 'content-app:file-permission-remove' data_item.id %}')" >
+            <i class="icon trash alternate"></i>
+        </button>
+  </td>
+</tr>

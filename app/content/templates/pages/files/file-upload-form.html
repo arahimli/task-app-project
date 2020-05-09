@@ -1,0 +1,117 @@
+{% extends 'content-base.html' %}
+{% load static %}
+{% block title_block %}
+    {{ page_title }}
+{% endblock %}
+{% block css_block %}
+
+<link rel="stylesheet" href="{% static 'main/dropzone/5.5.1/dropzone.min.css' %}"/>
+
+    <style>
+
+    .dropzone {
+    background: white;
+    border-radius: 5px;
+    border: 2px dashed rgb(0, 135, 247);
+    border-image: none;
+    min-height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    </style>
+
+{% endblock %}
+{% block content_block %}
+		<div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+			<div class="ui container grid">
+				<div class="row">
+					<div class="sixteen wide computer sixteen wide phone centered column">
+                        <div class="ui large breadcrumb">
+                          <a class="section" href="{% url 'content-app:dashboard' %}">Dashboard</a>
+                          <i class="right chevron icon divider"></i>
+                          <a class="section" href="{% url 'content-app:file-list' %}">Your shared file list</a>
+                          <i class="right chevron icon divider"></i>
+                          <div class="active section">{{ page_title }}</div>
+                        </div>
+						<h2><i class="{{ page_icon }} icon"></i> {{ page_title }}</h2>
+						<div class="ui divider"></div>
+						<div class="ui grid">
+							<!-- BEGIN STATISTIC ITEM -->
+							<!-- END STATISTIC ITEM -->
+							<div class="sixteen wide computer sixteen wide phone column justifed">
+                                <div class="ui grid">
+                                    <div class="sixteen wide column">
+
+                                        {% include 'include/messages.html' %}
+                                        {% if messages %}
+                                            <div class="ui divider"></div>
+                                        {% endif %}
+                                        <form id="upload-widget" method="post" action="{% url 'content-app:add-file' %}" class="dropzone">
+                                            {% csrf_token %}
+                                              <div class="dz-message needsclick">
+                                                Drop images here or <span class="btn btn-link">click to upload</span>.
+                                                <span class="note needsclick">(Images must be smaller than <strong>{{ MAX_FILE_UPLOAD_LIMIT }}MB</strong>)</span>
+                                              </div>
+                                            <div class="fallback">
+                                                <input name="file" type="file" />
+                                            </div>
+                                        </form>
+                                        <div class="ui divider"></div>
+                                        <button class="ui large right labeled primary icon button" id="startUpload" style="width: 100%;">
+                                            <i class="right chevron icon"></i>
+
+                                            {{ btn_label }}
+                                        </button>
+                                    </div>
+                                </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+{% block js_block %}
+  <script src="{% static 'main/dropzone/5.5.1/dropzone.min.js' %}"></script>
+  <script>
+
+        //Disabling autoDiscover
+        Dropzone.autoDiscover = false;
+        var count = 0;
+        var addedFilesHash = {};
+        $(function() {
+            //Dropzone class
+            var myDropzone = new Dropzone(".dropzone", {
+                paramName: "file",
+                maxFilesize: {{ MAX_FILE_UPLOAD_LIMIT }},
+                maxFiles: 1,
+                {#acceptedFiles: "image/*,application/pdf",#}
+                autoProcessQueue: false,
+                error: function (file, response) {
+                    console.log("Error");
+                    console.log(response);
+                },
+                success: function (file, response) {
+                    console.log("Sucess");
+                    if (response['code']){
+                        window.location = response['url'];
+                    }else{
+                        console.log(response);
+                    }
+                },
+                complete: function (file) {
+                    console.log("Completed");
+                },
+
+            });
+
+            $('#startUpload').click(function(){
+                myDropzone.processQueue();
+            });
+        });
+
+
+
+  </script>
+{% endblock %}

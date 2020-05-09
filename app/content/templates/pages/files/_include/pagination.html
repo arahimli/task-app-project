@@ -1,0 +1,38 @@
+{% if data_list_obj.has_other_pages %}
+  <div class="ui right floated pagination menu">
+    {% if data_list_obj.has_previous %}
+        <a class="icon item" href="javascript:void(0);" onclick="paginateForm({{ data_list_obj.previous_page_number }})">
+          <i class="left chevron icon"></i>
+        </a>
+{#      <li><a href="?page={{ data_list_obj.previous_page_number }}">&laquo;</a></li>#}
+    {% else %}
+        <a class="icon item disabled" href="javascript:void(0);">
+          <i class="left chevron icon"></i>
+        </a>
+{#      <li class="disabled"><span>&laquo;</span></li>#}
+    {% endif %}
+    {% for i in data_list_obj.paginator.page_range %}
+      {% if data_list_obj.number == i %}
+        <a class="icon item disabled" href="javascript:void(0);">
+          {{ i }} (current)
+        </a>
+      {% else %}
+        <a class="icon item" href="javascript:void(0);" onclick="paginateForm({{ i }})">
+          {{ i }}
+        </a>
+{#        <li><a href="?page={{ i }}">{{ i }}</a></li>#}
+      {% endif %}
+    {% endfor %}
+    {% if data_list_obj.has_next %}
+        <a class="icon item" href="javascript:void(0);" onclick="paginateForm({{ data_list_obj.next_page_number }})">
+          <i class="right chevron icon"></i>
+        </a>
+{#      <li><a href="?page={{ data_list_obj.next_page_number }}">&raquo;</a></li>#}
+    {% else %}
+        <a class="icon item disabled" href="javascript:void(0);">
+          <i class="right chevron icon"></i>
+        </a>
+{#      <li class="disabled"><span>&raquo;</span></li>#}
+    {% endif %}
+  </div>
+{% endif %}

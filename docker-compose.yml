@@ -1,0 +1,44 @@
+version: '3.3'
+
+services:
+  web:
+    build: ./app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app/:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis:alpine
+  celery:
+    build: ./app
+    command: celery -A app worker -l info
+    volumes:
+      - ./app/:/usr/src/app/
+    depends_on:
+      - redis
+  celery-beat:
+    build: ./app
+    command: celery -A app beat -l info
+    volumes:
+      - ./app/:/usr/src/app/
+    depends_on:
+      - redis
+
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=app_db_user
+      - POSTGRES_PASSWORD=app_db_user_password
+      - POSTGRES_DB=app_prod_default
+      - POSTGRES_DB_CORE=app_prod_core_db
+
+volumes:
+  postgres_data:

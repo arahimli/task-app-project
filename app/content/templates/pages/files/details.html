@@ -1,0 +1,249 @@
+{% extends 'content-base.html' %}
+{% load i18n staticfiles %}
+{#{% load i18n %}#}
+{% block title_block %}
+    {{ page_title }}
+{% endblock %}
+{% block css_block %}
+
+
+<link href="{% static 'main/limonte-sweetalert/28.11.8/sweetalert2.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+{% block content_block %}
+		<div class="right floated thirteen wide computer sixteen wide phone column" id="content">
+			<div class="ui container grid">
+				<div class="row itemcolor5">
+					<div class="sixteen wide computer sixteen wide phone centered column">
+                        <div class="ui large breadcrumb">
+                          <a class="section" href="{% url 'content-app:dashboard' %}">Dashboard</a>
+                          <i class="right chevron icon divider"></i>
+                          <a class="section" href="{% url 'content-app:file-list' %}">Your shared file list</a>
+                          <i class="right chevron icon divider"></i>
+                          <div class="active section">{{ page_title }}</div>
+                        </div>
+						<h2><i class="{{ page_icon }} icon"></i> {{ page_title }}</h2>
+						<div class="ui divider"></div>
+						<div class="ui grid">
+							<!-- END STATISTIC ITEM -->
+							<div class="sixteen wide computer sixteen wide phone column justifed">
+                                <div class="ui card fullwidth">
+                                  <div class="content">
+                                    <div class="header">File details</div>
+                                  </div>
+                                  <div class="content">
+                                    <h4 class="ui sub header">Published</h4>
+                                    <div class="ui small feed">
+                                      <div class="event">
+                                        <div class="content">
+                                          <div class="summary">
+                                              <i class="calendar icon divider"></i>
+                                              {{ shared_file_obj.expiration_date }}
+                                              <i class="right chevron icon divider"></i>
+                                              {% if request.user == shared_file_obj.author %}
+                                                OWNED
+                                              {% else %}
+                                                  added by <a>{{ shared_file_obj.author.get_full_name }}</a>
+                                              {% endif %}
+                                                {% if shared_file_obj.author == user %}
+                                                <i class="right chevron icon divider"></i>
+                                                <a class="circular mini ui yellow icon button" href="{% url 'content-app:file-edit' shared_file_obj.id %}">
+                                                    <i class="icon pencil alternate"></i>
+                                                </a>
+                                                <button class="circular mini red ui icon button"  onclick="DeleteItem('{% url 'content-app:file-remove' shared_file_obj.id %}','{% url 'content-app:file-list' %}')" >
+                                                    <i class="icon trash alternate"></i>
+                                                </button>
+                                                {% endif %}
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                        <div class="ui divider"></div>
+                                        <p>
+                                            {{ shared_file_obj.description }}
+                                        </p>
+                                    </div>
+                                  </div>
+                                  <div class="extra content">
+                                    <a class="ui teal button" href="{{ shared_file_obj.file.url }}" download><i class="icon download"></i> Download now</a>
+                                  </div>
+                                </div>
+                                {% if comment_form %}
+                                <h3 class="ui dividing header">Comments</h3>
+                                <div id="datails-page-comment-main-loader"></div>
+                                <div class="ui comments" id="datails-page-comment-main-data">
+                                </div>
+                                <form class="ui reply form" id="comment-form-data" method="post">
+                                    {% csrf_token %}
+                                    <div class="field">
+                                        {{ comment_form.text }}
+                                    </div>
+                                    <button type="submit" class="ui blue labeled submit icon button">
+                                        <i class="icon edit"></i> Add Reply
+                                    </button>
+                                </form>
+                                {% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+{% if comment_form %}
+
+        <div class="ui longer modal">
+          <div class="header">Edit comment</div>
+          <div class="content">
+            <form class="ui reply form" id="comment-edit-form-data" method="post" data-value="">
+                {% csrf_token %}
+                <div class="field">
+                    {{ comment_form.text }}
+                </div>
+                <button type="submit" class="ui blue labeled submit icon button">
+                    <i class="icon edit"></i> Edit comment
+                </button>
+            </form>
+          </div>
+          <div class="actions">
+            <div class="ui red cancel button">Close</div>
+          </div>
+        </div>
+
+{% endif %}
+
+{% endblock %}
+{% block js_block %}
+<script src="{% static 'main/limonte-sweetalert/28.11.8/sweetalert2.all.min.js' %}"></script>
+{% if comment_form %}
+<script>
+
+    var page_url = '{% url 'content-app:file-details-get-comments' shared_file_obj.id %}';
+    var load_button = '<a href="javascript:void(0)" onclick="getCommentData()">See more comments</a>';
+    var commentFormData = $('#comment-form-data');
+    var commentEditFormData = $('#comment-edit-form-data');
+
+</script>
+<script src="{% static 'main/Simple-UI-Semantic-UI-Admin/dist/js/file-operations.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+
+
+<script>
+
+var loc = window.location;
+var wsStart = 'ws://';
+if (loc.protocol == 'https:'){
+    wsStart = 'wss://';
+ }
+
+var endpoint = wsStart + loc.host + loc.pathname;
+var socket = new ReconnectingWebSocket(endpoint);
+var current_user_id = '{{ request.user.username }}'
+socket.onmessage = function(e){
+    console.log("message",e);
+    var responseData = JSON.parse(e.data)
+    if (responseData.code){
+        if (responseData.type=='add'){
+            console.log(current_user_id,responseData.user)
+            if (current_user_id == responseData.user){
+                inner_data = responseData.message.replace(responseData.replace_text, responseData.action_edit_html + responseData.action_delete_html)
+            }else{
+
+                if (current_user_id == responseData.author)
+                    inner_data = responseData.message.replace(responseData.replace_text, responseData.action_delete_html)
+                else
+                    inner_data = responseData.message.replace(responseData.replace_text, ' ')
+            }
+            $('#datails-page-comment-main-data').append(inner_data);
+        }else if (responseData.type=='edit'){
+            resetCloseCommentModal();
+            $('#comment-text-'+responseData.id).html(responseData.message);
+            $('#comment-edit-button-'+responseData.id).attr('onclick',"editCommentModal('"+responseData.id+"','"+ responseData.message +"')");
+        }else if (responseData.type=='remove'){
+            $('#comment-id-'+responseData.message).remove();
+        }
+    }
+ };
+socket.onopen = function(e){
+    console.log("open",e)
+    commentFormData.submit(function (event) {
+        event.preventDefault();
+        var commentText = $('#comment-form-data').find('textarea').val()
+        if (commentText.trim().length > 0){
+            var resultData = {
+                'type':'add',
+                'message':commentText
+            };
+            socket.send(JSON.stringify(resultData));
+            commentFormData.trigger("reset");
+        }else{
+            Swal.fire(
+              'Info!',
+              'Comment can not be blank 2',
+              'error'
+            )
+        }
+    })
+    commentEditFormData.submit(function (event) {
+        event.preventDefault();
+        var commentEditText = commentEditFormData.find('textarea').val()
+        if (commentEditText.trim().length > 0 && commentEditFormData.attr('data-value').trim().length > 0){
+            var resultData = {
+                'type':'edit',
+                'id':commentEditFormData.attr('data-value'),
+                'message':commentEditText
+            };
+            socket.send(JSON.stringify(resultData));
+        }else{
+            Swal.fire(
+              'Info!',
+              'Comment can not be blank',
+              'error'
+            )
+        }
+    })
+ }
+
+    function deleteComment($id) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.value) {
+            var resultData = {
+                'type':'remove',
+                'message':$id
+            };
+            socket.send(JSON.stringify(resultData));
+          }
+        })
+    }
+socket.onerror = function(e){
+    console.log("error",e)
+ }
+socket.onclose = function(e){
+    console.log("close",e)
+ }
+</script>
+
+
+<script>
+    function getCommentData(){
+        getCommentDataForm(page_url);
+    }
+
+    $( document ).ready(function() {
+        setTimeout(function(){
+            getCommentData()
+        }, 500);
+        console.log( "ready!" );
+    });
+</script>
+{% endif %}
+{% endblock %}

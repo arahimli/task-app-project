@@ -1,0 +1,21 @@
+{% if messages %}
+    <script>
+        {% for message in messages %}
+            var message_type = 'info';
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                message_type = 'info';
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                message_type = 'success';
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                message_type = 'error';
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.warning %}
+                message_type = 'warning';
+            {% endif %}
+                Swal.fire(
+                  '',
+                  '{{ message }}',
+                  message_type
+                );
+        {% endfor %}
+    </script>
+{% endif %}
